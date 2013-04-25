@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.sonatype.oss</groupId>
-    <artifactId>oss-parent</artifactId>
-    <version>7</version>
+    <groupId>io.vertx</groupId>
+    <artifactId>vert-maven-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>io.vertx</groupId>
   <artifactId>vertx-maven-archetype</artifactId>
-  <version>2.0</version>
+  <version>2.0.0-SNAPSHOT</version>
   <packaging>maven-archetype</packaging>
+
   <name>vertx-maven-archetype</name>
 
-  <licenses>
-    <license>
-      <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
   <developers>
     <developer>
       <id>ramki</id>
@@ -28,17 +21,6 @@
       <email>ramki.s@gmail.com</email>
     </developer>
   </developers>
-
-  <!--properties>
-    <internal.repo.path>file:///tmp/mvn-repo/</internal.repo.path>
-  </properties>
-  <distributionManagement>
-    <repository>
-      <id>internal.repo</id>
-      <name>Internal Repository</name>
-      <url>${internal.repo.path}</url>
-    </repository>
-  </distributionManagement-->
 
   <build>
     <extensions>
@@ -59,5 +41,4 @@
     </pluginManagement>
   </build>
 
-  <url>http://maven.apache.org</url>
 </project>
