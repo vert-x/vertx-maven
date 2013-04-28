@@ -9,7 +9,7 @@
   </parent>
 
   <groupId>io.vertx</groupId>
-  <artifactId>vert-maven-parent</artifactId>
+  <artifactId>vertx-maven-parent</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
@@ -56,5 +56,4 @@
     <module>plugin</module>
     <module>archetype</module>
   </modules>
-
 </project>

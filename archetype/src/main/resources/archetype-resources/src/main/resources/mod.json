@@ -1,3 +1,4 @@
 {
-  "main":"app.js"
+  "main":"app.js",
+  "deploys":"io.vertx~lang-rhino~1.0.0-SNAPSHOT"
 }

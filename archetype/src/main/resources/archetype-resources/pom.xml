@@ -19,6 +19,7 @@
     <!--Dependency versions-->
     <vertx.version>2.0.0-SNAPSHOT</vertx.version>
     <vertx.testtools.version>1.0.0-SNAPSHOT</vertx.testtools.version>
+    <vertx.pullindeps>false</vertx.pullindeps>
     <junit.version>4.11</junit.version>
 
     <!--Plugin versions-->
@@ -112,24 +113,6 @@
         <version>${maven.resources.plugin.version}</version>
         <executions>
           <execution>
-            <id>copy-mod-to-mods</id>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>
-                ${basedir}/mods/${module.name}
-              </outputDirectory>
-              <overwrite>true</overwrite>
-              <resources>
-                <resource>
-                  <directory>target/classes</directory>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-          <execution>
             <id>copy-mod-to-target</id>
             <phase>process-classes</phase>
             <goals>
@@ -169,17 +152,6 @@
         <version>${maven.dependency.plugin.version}</version>
         <executions>
           <execution>
-            <id>copy-mod-dependencies-to-mods</id>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${basedir}/mods/${module.name}/lib</outputDirectory>
-              <includeScope>runtime</includeScope>
-            </configuration>
-          </execution>
-          <execution>
             <id>copy-mod-dependencies-to-target</id>
             <phase>process-classes</phase>
             <goals>
@@ -193,23 +165,12 @@
         </executions>
       </plugin>
       <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>${maven.clean.plugin.version}</version>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>${basedir}/mods</directory>
-            </fileset>
-          </filesets>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven.surefire.plugin.version}</version>
         <configuration>
           <includes>
-            <include>**/*Test*.java</include>
+            <include>**/unit/*Test*.java</include>
           </includes>
         </configuration>
       </plugin>
@@ -218,8 +179,14 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <version>${maven.failsafe.plugin.version}</version>
         <configuration>
+          <systemProperties>
+            <property>
+              <name>vertx.mods</name>
+              <value>target/mods</value>
+            </property>
+          </systemProperties>
           <includes>
-            <exclude>**/integration/**</exclude>
+            <include>**/integration/**</include>
           </includes>
         </configuration>
         <executions>
@@ -252,6 +219,20 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>io.vertx</groupId>
+        <artifactId>vertx-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>pullindeps</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>pullindeps</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
@@ -271,7 +252,6 @@
       </plugin>
     </plugins>
   </build>
-
   <reporting>
     <plugins>
       <plugin>
@@ -289,5 +269,4 @@
       </plugin>
     </plugins>
   </reporting>
-
 </project>
