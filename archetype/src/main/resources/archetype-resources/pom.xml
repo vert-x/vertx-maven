@@ -106,6 +106,15 @@
            <instances>1</instances>
         </configuration>
         -->
+        <executions>
+          <execution>
+            <id>pullindeps</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>pullindeps</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
       <!-- Other plugins required by the build -->
@@ -134,22 +143,6 @@
               <resources>
                 <resource>
                   <directory>target/classes</directory>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-          <execution>
-            <id>site-css</id>
-            <phase>test</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>target/site</outputDirectory>
-              <overwrite>false</overwrite>
-              <resources>
-                <resource>
-                  <directory>${basedir}/src/site</directory>
                 </resource>
               </resources>
             </configuration>
@@ -225,20 +218,6 @@
             <phase>integration-test</phase>
             <goals>
               <goal>failsafe-report-only</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>io.vertx</groupId>
-        <artifactId>vertx-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>pullindeps</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>pullindeps</goal>
             </goals>
           </execution>
         </executions>
