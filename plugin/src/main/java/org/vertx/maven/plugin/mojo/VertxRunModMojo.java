@@ -40,7 +40,7 @@ public class VertxRunModMojo extends BaseVertxMojo {
   public void execute() throws MojoExecutionException {
 
     try {
-      System.setProperty("vertx.mods", "target/mods");
+      System.setProperty("vertx.mods", modsdir.getAbsolutePath());
       final PlatformManager pm = factory.createPlatformManager();
       final CountDownLatch latch = new CountDownLatch(1);
       pm.deployModule(moduleName, getConf(), instances,
@@ -50,8 +50,11 @@ public class VertxRunModMojo extends BaseVertxMojo {
               if (event.succeeded()) {
                 getLog().info("CTRL-C to stop server");
               } else {
-                getLog().info(
-                    "Could not find the module. Did you forget to do mvn package?");
+                if (event.cause() != null) {
+                  getLog().error(event.cause());
+                } else {
+                  getLog().info("Could not find the module. Did you forget to do mvn package?");
+                }
                 latch.countDown();
               }
             }

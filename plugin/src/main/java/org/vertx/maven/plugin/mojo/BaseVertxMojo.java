@@ -58,6 +58,12 @@ public abstract class BaseVertxMojo extends AbstractMojo {
   @Parameter(property = "run.instances", defaultValue = "1")
   protected Integer instances;
 
+  /**
+   * The mods directory.  The default is relative path target/mods.
+   */
+  @Parameter(property = "vertx.modsdir", defaultValue = "target/mods")
+  protected File modsdir;
+
   protected JsonObject getConf() {
     JsonObject config = null;
     final String confContent = readConfigFile(configFile);

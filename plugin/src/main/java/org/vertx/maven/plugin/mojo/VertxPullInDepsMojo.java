@@ -7,6 +7,7 @@ import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.Handler;
 import org.vertx.java.platform.PlatformManager;
 
+import java.io.File;
 import java.util.concurrent.CountDownLatch;
 
 import static java.lang.Long.MAX_VALUE;
@@ -24,7 +25,7 @@ public class VertxPullInDepsMojo extends BaseVertxMojo {
   public void execute() throws MojoExecutionException {
     try {
       if (pullindeps) {
-        System.setProperty("vertx.mods", "target/mods");
+        System.setProperty("vertx.mods", modsdir.getAbsolutePath());
         final PlatformManager pm = factory.createPlatformManager();
 
         final CountDownLatch latch = new CountDownLatch(1);
@@ -35,8 +36,11 @@ public class VertxPullInDepsMojo extends BaseVertxMojo {
                 if (event.succeeded()) {
                   latch.countDown();
                 } else {
-                  getLog().info(
-                      "Cannot find the module. Did you forget to do mvn package?");
+                  if (event.cause() != null) {
+                    getLog().error(event.cause());
+                  } else {
+                    getLog().info("Cannot find the module. Did you forget to do mvn package?");
+                  }
                   latch.countDown();
                 }
               }
