@@ -49,7 +49,7 @@ public abstract class BaseVertxMojo extends AbstractMojo {
    * </p>
    */
   @Parameter(property = "run.configFile")
-  protected String configFile;
+  protected File configFile;
 
   /**
    * The number of instances of the verticle to instantiate in the vert.x
@@ -66,24 +66,26 @@ public abstract class BaseVertxMojo extends AbstractMojo {
 
   protected JsonObject getConf() {
     JsonObject config = null;
-    final String confContent = readConfigFile(configFile);
+    final String confContent = readConfigFile();
     if (confContent != null && !confContent.isEmpty()) {
       config = new JsonObject(confContent);
     }
     return config;
   }
 
-  private String readConfigFile(final String strFile) {
-    if (strFile == null || strFile.isEmpty()) {
+  private String readConfigFile() {
+    if (configFile == null) {
+      return null;
+    }
+    if (!configFile.exists()) {
+      getLog().error("Config file '" + configFile.getAbsolutePath() + "' does not exist.");
       return null;
     }
 
     try {
-      final File file = new File(strFile);
-      final URI uri = file.toURI();
-      return new String(readAllBytes(java.nio.file.Paths.get(uri)));
+      return new String(readAllBytes(configFile.toPath()));
     } catch (final IOException e) {
-      e.printStackTrace();
+      getLog().error(e);
       // just returns an empty string. Nothing to be thrown
     }
 
