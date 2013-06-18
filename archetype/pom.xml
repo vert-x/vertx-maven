@@ -3,13 +3,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>io.vertx</groupId>
-    <artifactId>vertx-maven-parent</artifactId>
-    <version>1.0.0-beta1</version>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
   </parent>
 
+  <groupId>io.vertx</groupId>
   <artifactId>vertx-maven-archetype</artifactId>
-  <version>1.0.0-beta1</version>
+  <version>1.0.0-CR1</version>
   <packaging>maven-archetype</packaging>
 
   <name>vertx-maven-archetype</name>
@@ -23,6 +24,24 @@
   </developers>
 
   <build>
+
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>1.4</version>
+          <executions>
+            <execution>
+               <id>sign-artifacts</id>
+               <phase>verify</phase>
+               <goals>
+                  <goal>sign</goal>
+               </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+
     <extensions>
       <extension>
         <groupId>org.apache.maven.archetype</groupId>
@@ -40,5 +59,7 @@
       </plugins>
     </pluginManagement>
   </build>
+
+
 
 </project>

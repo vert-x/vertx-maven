@@ -42,7 +42,7 @@ To start it, type:
 	<plugin>
 		<groupId>io.vertx</groupId>
 		<artifactId>vertx-maven-plugin</artifactId>
-		<version>1.0.0-beta1</version>
+		<version>1.0.0-CR1</version>
 	</plugin>  
 
 

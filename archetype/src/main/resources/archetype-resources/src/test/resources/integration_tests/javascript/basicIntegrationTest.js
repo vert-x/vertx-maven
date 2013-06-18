@@ -2,11 +2,11 @@
  * Simple integration test which shows tests deploying other verticles, using the Vert.x API etc
  */
 
-var container = require("container")
+var container = require("vertx/container")
 var vertx = require("vertx");
 var vertxTests = require("vertx_tests");
 var vassert = require("vertx_assert");
-var console = require("console");
+var console = require("vertx/console");
 
 // The test methods must begin with "test"
 
