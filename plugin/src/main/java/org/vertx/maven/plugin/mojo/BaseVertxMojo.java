@@ -22,7 +22,12 @@ import org.vertx.java.core.json.JsonObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.nio.file.Files.readAllBytes;
 
@@ -64,6 +69,12 @@ public abstract class BaseVertxMojo extends AbstractMojo {
   @Parameter(property = "vertx.modsdir", defaultValue = "target/mods")
   protected File modsdir;
 
+  /**
+   * An array of resource directories to add to the plugin class loader.
+   */
+  @Parameter
+  protected File[] resources;
+
   protected JsonObject getConf() {
     JsonObject config = null;
     final String confContent = readConfigFile(configFile);
@@ -89,5 +100,30 @@ public abstract class BaseVertxMojo extends AbstractMojo {
 
     return null;
   }
+
+  protected void initClassLoader() {
+    if (resources == null || resources.length == 0) {
+        return;
+    }
+
+    List<URL> urls = new ArrayList<>();
+
+    for (File file : resources) {
+      if (file.exists() && file.isDirectory()) {
+        try {
+          urls.add(file.toURI().toURL());
+        } catch (MalformedURLException | RuntimeException ex) {
+          getLog().error("Error loading resource url: " + file, ex);
+        }
+      }
+    }
+
+    if (!urls.isEmpty()) {
+      ClassLoader cl = Thread.currentThread().getContextClassLoader();
+      ClassLoader newCl = URLClassLoader.newInstance(urls.toArray(new URL[0]), cl);
+      Thread.currentThread().setContextClassLoader(newCl);
+    }
+  }
+
 }
 
