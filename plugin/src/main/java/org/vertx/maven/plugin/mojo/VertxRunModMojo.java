@@ -40,6 +40,7 @@ public class VertxRunModMojo extends BaseVertxMojo {
   public void execute() throws MojoExecutionException {
 
     try {
+      initClassLoader();
       System.setProperty("vertx.mods", modsdir.getAbsolutePath());
       final PlatformManager pm = factory.createPlatformManager();
       final CountDownLatch latch = new CountDownLatch(1);
