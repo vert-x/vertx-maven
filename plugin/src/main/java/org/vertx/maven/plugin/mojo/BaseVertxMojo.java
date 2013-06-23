@@ -24,6 +24,8 @@ import org.vertx.java.core.json.JsonObject;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collections;
+import java.util.Map;
 
 import static java.nio.file.Files.readAllBytes;
 
@@ -63,6 +65,11 @@ public abstract class BaseVertxMojo extends AbstractMojo {
    * The mods directory.  The default is relative path target/mods.
    */
   protected File modsDir = new File("target/mods");
+
+  /**
+   * List of system properties to set when running a module.
+   */
+  protected Map<String, String> systemPropertyVariables = Collections.EMPTY_MAP;
 
   protected JsonObject getConf() {
     JsonObject config = null;

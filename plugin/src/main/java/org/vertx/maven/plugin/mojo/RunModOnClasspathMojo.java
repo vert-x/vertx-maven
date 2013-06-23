@@ -13,6 +13,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import static java.lang.Long.MAX_VALUE;
@@ -67,6 +68,9 @@ public class RunModOnClasspathMojo extends BaseVertxMojo {
   protected void doExecute(URL[] classpath) throws MojoExecutionException {
 
     try {
+      for (final Map.Entry<String, String> entry : systemPropertyVariables.entrySet()) {
+        System.setProperty(entry.getKey(), entry.getValue());
+      }
       System.setProperty("vertx.mods", modsDir.getAbsolutePath());
       final PlatformManager pm = PlatformLocator.factory.createPlatformManager();
       final CountDownLatch latch = new CountDownLatch(1);
