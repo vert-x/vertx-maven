@@ -51,18 +51,21 @@ public abstract class BaseVertxMojo extends AbstractMojo {
    * An example value would be src/main/resources/com/acme/MyVerticle.conf
    * </p>
    */
-  protected String configFile = null;
+  @Parameter
+  protected File configFile = null;
 
   /**
    * The number of instances of the verticle to instantiate in the vert.x
    * server. The default is 1.
    */
-  protected Integer instances = 1;
+  @Parameter(defaultValue = "1")
+  protected Integer instances;
 
   /**
    * The mods directory.  The default is relative path target/mods.
    */
-  protected File modsDir = new File("target/mods");
+  @Parameter(defaultValue = "target/mods")
+  protected File modsDir;
 
   protected JsonObject getConf() {
     JsonObject config = null;
@@ -73,13 +76,12 @@ public abstract class BaseVertxMojo extends AbstractMojo {
     return config;
   }
 
-  private String readConfigFile(final String strFile) {
-    if (strFile == null || strFile.isEmpty()) {
+  private String readConfigFile(final File file) {
+    if (file == null || !file.exists() || !file.isFile()) {
       return null;
     }
 
     try {
-      final File file = new File(strFile);
       final URI uri = file.toURI();
       return new String(readAllBytes(java.nio.file.Paths.get(uri)));
     } catch (final IOException e) {
