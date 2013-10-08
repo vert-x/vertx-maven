@@ -7,6 +7,7 @@ import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.Handler;
 import org.vertx.java.platform.PlatformManager;
 
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import static java.lang.Long.MAX_VALUE;
@@ -43,6 +44,9 @@ public class VertxRunModMojo extends BaseVertxMojo {
   public void execute() throws MojoExecutionException {
 
     try {
+      for (final Map.Entry<String, String> entry : systemPropertyVariables.entrySet()) {
+        System.setProperty(entry.getKey(), entry.getValue());
+      }
       System.setProperty("vertx.mods", modsDir.getAbsolutePath());
       final PlatformManager pm = factory.createPlatformManager();
       final CountDownLatch latch = new CountDownLatch(1);

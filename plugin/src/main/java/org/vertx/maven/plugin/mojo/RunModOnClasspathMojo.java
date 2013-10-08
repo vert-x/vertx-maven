@@ -14,6 +14,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import static java.lang.Long.MAX_VALUE;
@@ -68,6 +69,9 @@ public class RunModOnClasspathMojo extends BaseVertxMojo {
   protected void doExecute(URL[] classpath) throws MojoExecutionException {
     ClassLoader oldTCCL = Thread.currentThread().getContextClassLoader();
     try {
+      for (final Map.Entry<String, String> entry : systemPropertyVariables.entrySet()) {
+        System.setProperty(entry.getKey(), entry.getValue());
+      }
       System.setProperty("vertx.mods", modsDir.getAbsolutePath());
 
       // We have to create another classloader which can load resources from src/main/resources so users
