@@ -6,14 +6,23 @@
     <id>mod</id>
     <formats>
         <format>zip</format>
+        <format>dir</format>
     </formats>
 
     <includeBaseDirectory>false</includeBaseDirectory>
 
+    <dependencySets>
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <outputDirectory>lib/</outputDirectory>
+            <scope>runtime</scope>
+            <fileMode>664</fileMode>
+        </dependencySet>
+    </dependencySets>
     <fileSets>
         <fileSet>
-            <outputDirectory></outputDirectory>
-            <directory>target/mods/${module.name}</directory>
+            <outputDirectory>/</outputDirectory>
+            <directory>${project.build.outputDirectory}</directory>
             <includes>
                 <include>**</include>
             </includes>
