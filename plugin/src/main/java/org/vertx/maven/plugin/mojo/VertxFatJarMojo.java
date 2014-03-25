@@ -44,9 +44,8 @@ public class VertxFatJarMojo extends BaseVertxMojo {
       if (createFatJar) {
         System.setProperty("vertx.mods", modsDir.getAbsolutePath());
         final PlatformManager pm = factory.createPlatformManager();
-
         final CountDownLatch latch = new CountDownLatch(1);
-        pm.makeFatJar(moduleName, "target",
+        pm.makeFatJar(moduleName, project.getBuild().getDirectory(),
             new Handler<AsyncResult<Void>>() {
               @Override
               public void handle(final AsyncResult<Void> event) {
