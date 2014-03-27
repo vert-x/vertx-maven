@@ -29,10 +29,13 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static java.nio.file.Files.readAllBytes;
 
 public abstract class BaseVertxMojo extends AbstractMojo {
+
+  private Pattern CLASSPATH_DELIMITER = Pattern.compile(":");
 
   @Component
   protected MavenProject project;
@@ -60,6 +63,22 @@ public abstract class BaseVertxMojo extends AbstractMojo {
   @Parameter
   protected File configFile = null;
 
+   /**
+     * <p>
+     * The extra classpath for this verticle.
+     * </p>
+     * <p>
+     * If the path is relative (does not start with / or a drive letter like
+     * C:), the path is relative to the directory containing the POM.
+     * </p>
+     * <p>
+     * An example value would be src/main/resources/:src/test/resources/
+     * </p>
+   */
+
+  @Parameter
+  protected String classpath = null;
+
   /**
    * The number of instances of the verticle to instantiate in the vert.x
    * server. The default is 1.
@@ -72,6 +91,8 @@ public abstract class BaseVertxMojo extends AbstractMojo {
    */
   @Parameter(defaultValue = "target/mods")
   protected File modsDir;
+
+
 
   protected JsonObject getConf() {
     JsonObject config = null;
@@ -106,6 +127,7 @@ public abstract class BaseVertxMojo extends AbstractMojo {
     List<URL> urls = new ArrayList<>();
     addURLs(urls, "src/main/platform_lib");
     addURLs(urls, "src/main/resources/platform_lib");
+    addClasspathResources(urls);
 
     return new LoadFirstClassLoader(urls.toArray(new URL[urls.size()]), getClass().getClassLoader());
   }
@@ -132,6 +154,20 @@ public abstract class BaseVertxMojo extends AbstractMojo {
         }
       }
     }
+  }
+
+  private void addClasspathResources(final List<URL> urls) throws IOException{
+        if(classpath != null){
+            String[] paths = CLASSPATH_DELIMITER.split(classpath);
+           if(paths != null){
+                for(String path: paths){
+                    File dir = new File(path);
+                    if(dir.exists()){
+                        urls.add(dir.getCanonicalFile().toURI().toURL());
+                    }
+                }
+           }
+        }
   }
 
   private static class LoadFirstClassLoader extends URLClassLoader {
