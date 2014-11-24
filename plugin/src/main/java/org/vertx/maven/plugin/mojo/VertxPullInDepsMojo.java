@@ -21,6 +21,8 @@ public class VertxPullInDepsMojo extends BaseVertxMojo {
   @Parameter(property = "vertx.pullInDeps", defaultValue = "false")
   protected Boolean pullInDeps;
 
+  protected Throwable error;
+  
   @Override
   public void execute() throws MojoExecutionException {
     if (pullInDeps) {
@@ -36,17 +38,18 @@ public class VertxPullInDepsMojo extends BaseVertxMojo {
             @Override
             public void handle(final AsyncResult<Void> event) {
               if (!event.succeeded()) {
-                getLog().error(event.cause());
+                error = event.cause();
               }
               latch.countDown();
             }
           });
         latch.await(MAX_VALUE, MILLISECONDS);
-
       } catch (final Exception e) {
         throw new MojoExecutionException(e.getMessage());
       } finally {
         Thread.currentThread().setContextClassLoader(oldTCCL);
+        if (error != null)
+        	throw new MojoExecutionException("pullInDeps failed", error);
       }
     }
   }
