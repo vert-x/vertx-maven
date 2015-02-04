@@ -24,7 +24,7 @@ Create a Vert.x module link
 Deploys the current module and starts the module. The module will continue to run until the plugin is explicitly stopped with CTRL-C.  
 To start it, type:
 
-	mvn vertx:runmod
+	mvn vertx:runMod
 
 You can of course, just use `vertx runmod` to run a module, but using the maven task doesn't require Vert.x to be pre-installed on
 your system and uses the versions of Vert.x declared in your pom.xml
