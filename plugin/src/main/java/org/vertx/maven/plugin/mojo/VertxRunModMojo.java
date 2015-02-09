@@ -2,10 +2,13 @@ package org.vertx.maven.plugin.mojo;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.Handler;
 import org.vertx.java.platform.PlatformManager;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import static java.lang.Long.MAX_VALUE;
@@ -36,11 +39,21 @@ import static org.vertx.java.platform.PlatformLocator.factory;
 @Mojo(name = "runMod", requiresProject = true, threadSafe = false, requiresDependencyResolution = COMPILE_PLUS_RUNTIME)
 public class VertxRunModMojo extends BaseVertxMojo {
 
+  /**
+   * List of system properties to set when running a module.
+   */
+  @Parameter
+  protected Map<String, String> systemPropertyVariables = Collections.emptyMap();
+
   @Override
   public void execute() throws MojoExecutionException {
 
     ClassLoader oldTCCL = Thread.currentThread().getContextClassLoader();
     try {
+      for (final Map.Entry<String, String> entry : systemPropertyVariables.entrySet()) {
+        System.setProperty(entry.getKey(), entry.getValue());
+	  }
+
       setVertxMods();
 
       Thread.currentThread().setContextClassLoader(createClassLoader());
