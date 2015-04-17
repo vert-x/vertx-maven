@@ -38,39 +38,42 @@ import static org.vertx.java.platform.PlatformLocator.factory;
 @Mojo(name = "init", requiresProject = true, threadSafe = false, requiresDependencyResolution = COMPILE_PLUS_RUNTIME)
 public class VertxInitMojo extends BaseVertxMojo {
 
-  @Override
-  public void execute() throws MojoExecutionException {
+	private static final Object lock = new Object();
 
-    try {
-      setVertxMods();
+	@Override
+	public void execute() throws MojoExecutionException {
+		synchronized (lock) {
+			try {
+				setVertxMods();
 
-      File cpFile = new File("vertx_classpath.txt");
-      if (!cpFile.exists()) {
-        cpFile.createNewFile();
-        String defaultCp = "src/main/resources\r\n" +
-            "target/classes\r\n" +
-            "target/dependencies\r\n" +
-            "bin\r\n";
-        try (FileWriter writer = new FileWriter(cpFile)) {
-          writer.write(defaultCp);
-        }
-      }
+				File cpFile = new File("vertx_classpath.txt");
+				if (!cpFile.exists()) {
+					cpFile.createNewFile();
+					String defaultCp = "src/main/resources\r\n" +
+							"target/classes\r\n" +
+							"target/dependencies\r\n" +
+							"bin\r\n";
+					try (FileWriter writer = new FileWriter(cpFile)) {
+						writer.write(defaultCp);
+					}
+				}
 
-      final PlatformManager pm = factory.createPlatformManager();
+				final PlatformManager pm = factory.createPlatformManager();
 
-      final CountDownLatch latch = new CountDownLatch(1);
-      pm.createModuleLink(moduleName, new Handler<AsyncResult<Void>>() {
-        @Override
-        public void handle(AsyncResult<Void> asyncResult) {
-          if (!asyncResult.succeeded()) {
-            getLog().info(asyncResult.cause().getMessage());
-          }
-          latch.countDown();
-        }
-      });
-      latch.await(MAX_VALUE, MILLISECONDS);
-    } catch (final Exception e) {
-      throw new MojoExecutionException(e.getMessage(), e);
-    }
-  }
+				final CountDownLatch latch = new CountDownLatch(1);
+				pm.createModuleLink(moduleName, new Handler<AsyncResult<Void>>() {
+					@Override
+					public void handle(AsyncResult<Void> asyncResult) {
+						if (!asyncResult.succeeded()) {
+							getLog().info(asyncResult.cause().getMessage());
+						}
+						latch.countDown();
+					}
+				});
+				latch.await(MAX_VALUE, MILLISECONDS);
+			} catch (final Exception e) {
+				throw new MojoExecutionException(e.getMessage(), e);
+			}
+		}
+	}
 }
