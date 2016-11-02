@@ -1,5 +1,6 @@
-vertx-maven
-===========
+# Vert.x 2.x is **deprecated** - use instead https://github.com/vert-x3/vertx-maven-starter
+
+## vertx-maven
 
 Maven infrastructure for Vertx.
 
@@ -10,4 +11,4 @@ Maven infrastructure for Vertx.
          * runmod
          * pullInDeps
 
-###For more details refer inner directories.
+#### For more details refer inner directories.
