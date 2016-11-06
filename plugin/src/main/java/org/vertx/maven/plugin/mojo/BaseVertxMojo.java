@@ -163,9 +163,9 @@ public abstract class BaseVertxMojo extends AbstractMojo {
       getLog().info("Starting clustering...");
 
       if (System.getProperty("vertx.clusterManagerFactory", null) == null) {
-          getLog().debug("clusterManagerFactory: " + clusterManagerFactory);
           System.setProperty("vertx.clusterManagerFactory", clusterManagerFactory);
       }
+      getLog().debug("clusterManagerFactory: " + System.getProperty("vertx.clusterManagerFactory"));
 
       if (clusterHost == null) {
         clusterHost = getDefaultAddress();
