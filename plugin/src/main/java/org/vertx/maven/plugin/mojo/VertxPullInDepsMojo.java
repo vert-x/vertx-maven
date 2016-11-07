@@ -15,39 +15,43 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE_PLUS_
 import static org.vertx.java.platform.PlatformLocator.factory;
 
 @Mojo(name = "pullInDeps", requiresProject = true, threadSafe = false, requiresDependencyResolution =
-    COMPILE_PLUS_RUNTIME)
+		COMPILE_PLUS_RUNTIME)
 public class VertxPullInDepsMojo extends BaseVertxMojo {
 
-  @Parameter(property = "vertx.pullInDeps", defaultValue = "false")
-  protected Boolean pullInDeps;
+	private static final Object lock = new Object();
 
-  @Override
-  public void execute() throws MojoExecutionException {
-    if (pullInDeps) {
-      ClassLoader oldTCCL = Thread.currentThread().getContextClassLoader();
-      try {
-        setVertxMods();
-        Thread.currentThread().setContextClassLoader(createClassLoader());
-        PlatformManager pm = factory.createPlatformManager();
+	@Parameter(property = "vertx.pullInDeps", defaultValue = "false")
+	protected Boolean pullInDeps;
 
-        final CountDownLatch latch = new CountDownLatch(1);
-        pm.pullInDependencies(moduleName,
-          new Handler<AsyncResult<Void>>() {
-            @Override
-            public void handle(final AsyncResult<Void> event) {
-              if (!event.succeeded()) {
-                getLog().error(event.cause());
-              }
-              latch.countDown();
-            }
-          });
-        latch.await(MAX_VALUE, MILLISECONDS);
+	@Override
+	public void execute() throws MojoExecutionException {
+		synchronized (lock) {
+			if (pullInDeps) {
+				ClassLoader oldTCCL = Thread.currentThread().getContextClassLoader();
+				try {
+					setVertxMods();
+					Thread.currentThread().setContextClassLoader(createClassLoader());
+					PlatformManager pm = factory.createPlatformManager();
 
-      } catch (final Exception e) {
-        throw new MojoExecutionException(e.getMessage());
-      } finally {
-        Thread.currentThread().setContextClassLoader(oldTCCL);
-      }
-    }
-  }
+					final CountDownLatch latch = new CountDownLatch(1);
+					pm.pullInDependencies(moduleName,
+							new Handler<AsyncResult<Void>>() {
+								@Override
+								public void handle(final AsyncResult<Void> event) {
+									if (!event.succeeded()) {
+										getLog().error(event.cause());
+									}
+									latch.countDown();
+								}
+							});
+					latch.await(MAX_VALUE, MILLISECONDS);
+
+				} catch (final Exception e) {
+					throw new MojoExecutionException(e.getMessage());
+				} finally {
+					Thread.currentThread().setContextClassLoader(oldTCCL);
+				}
+			}
+		}
+	}
 }

@@ -32,39 +32,43 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE_PLUS_
 import static org.vertx.java.platform.PlatformLocator.factory;
 
 @Mojo(name = "fatJar", requiresProject = true, threadSafe = false, requiresDependencyResolution =
-    COMPILE_PLUS_RUNTIME)
+		COMPILE_PLUS_RUNTIME)
 public class VertxFatJarMojo extends BaseVertxMojo {
 
-  @Parameter(property = "vertx.createFatJar", defaultValue = "false")
-  protected Boolean createFatJar;
+	@Parameter(property = "vertx.createFatJar", defaultValue = "false")
+	protected Boolean createFatJar;
 
-  @Override
-  public void execute() throws MojoExecutionException {
-    try {
-      if (createFatJar) {
-        System.setProperty("vertx.mods", modsDir.getAbsolutePath());
-        final PlatformManager pm = factory.createPlatformManager();
+	private static final Object lock = new Object();
 
-        final CountDownLatch latch = new CountDownLatch(1);
-        pm.makeFatJar(moduleName, project.getBasedir().getAbsolutePath() + "/target",
-            new Handler<AsyncResult<Void>>() {
-              @Override
-              public void handle(final AsyncResult<Void> event) {
-                if (event.succeeded()) {
-                  latch.countDown();
-                } else {
-                  if (!event.succeeded()) {
-                    getLog().error(event.cause());
-                  }
-                  latch.countDown();
-                }
-              }
-            });
-        latch.await(MAX_VALUE, MILLISECONDS);
-      }
-    } catch (final Exception e) {
-      throw new MojoExecutionException(e.getMessage());
-    }
-  }
+	@Override
+	public void execute() throws MojoExecutionException {
+		synchronized (lock) {
+			try {
+				if (createFatJar) {
+					System.setProperty("vertx.mods", modsDir.getAbsolutePath());
+					final PlatformManager pm = factory.createPlatformManager();
+
+					final CountDownLatch latch = new CountDownLatch(1);
+					pm.makeFatJar(moduleName, project.getBasedir().getAbsolutePath() + "/target",
+							new Handler<AsyncResult<Void>>() {
+								@Override
+								public void handle(final AsyncResult<Void> event) {
+									if (event.succeeded()) {
+										latch.countDown();
+									} else {
+										if (!event.succeeded()) {
+											getLog().error(event.cause());
+										}
+										latch.countDown();
+									}
+								}
+							});
+					latch.await(MAX_VALUE, MILLISECONDS);
+				}
+			} catch (final Exception e) {
+				throw new MojoExecutionException(e.getMessage());
+			}
+		}
+	}
 }
 
