@@ -60,3 +60,7 @@ Configuration Options
 
 * configFile: The config file to be used.
 * instances: The number of verticle instances.
+
+You can also replace the "/path/to/MyVerticle.conf" with a maven variable like ${vertx.config} and run the module with a command like:
+
+    mvn vertx:runMod -Dvertx.config=/path/to/MyVerticle.conf
